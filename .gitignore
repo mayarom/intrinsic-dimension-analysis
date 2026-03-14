@@ -1,0 +1,106 @@
+# =========================
+# Python bytecode / cache
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# =========================
+# Virtual environments
+# =========================
+.venv/
+venv/
+env/
+ENV/
+
+# =========================
+# Build / packaging
+# =========================
+build/
+dist/
+.eggs/
+*.egg-info/
+pip-wheel-metadata/
+
+# =========================
+# Test / lint / type-check caches
+# =========================
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+
+# =========================
+# IDE / editor
+# =========================
+.idea/
+.vscode/
+*.iml
+
+# =========================
+# Jupyter
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Logs / temp
+# =========================
+*.log
+*.tmp
+*.temp
+
+# =========================
+# macOS / system files
+# =========================
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# =========================
+# Microsoft Office temp files
+# =========================
+~$*.docx
+~$*.doc
+~$*.pptx
+~$*.xlsx
+
+# =========================
+# Downloaded / cached raw data
+# Do not upload OpenML cache or local raw data
+# =========================
+data/raw/
+data/processed/
+
+# =========================
+# Generated synthetic data
+# Ignore only if you prefer regenerating from code
+# =========================
+# data/synthetic/
+
+# =========================
+# Old / duplicate generated figures
+# Keep only the final figures directory
+# =========================
+figures/
+
+# =========================
+# Generated reports that are not final
+# =========================
+intrinsic_dimension_report_with_figures.docx
+
+# =========================
+# Keep important project files explicitly
+# =========================
+!README.md
+!AI_USAGE.md
+!requirements.txt
+!src/
+!src/*.py
+!report/
+!intrinsic_dimension_analysis/
+!intrinsic_dimension_analysis/*.png
+!intrinsic_dimension_report_with_all_figures.docx
