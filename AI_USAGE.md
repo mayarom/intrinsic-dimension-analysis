@@ -1,75 +1,67 @@
-# 🤖 AI Usage Disclosure & Transparency Report
+# AI Usage Disclosure
 
-This document outlines the deliberate and strategic integration of Large Language Models (LLMs) in the design, implementation, and documentation of the **Intrinsic Dimension Analysis** project. 
+This project made meaningful use of large language model (LLM) assistance during development, in accordance with the course requirement to use AI tools substantially and to document that usage properly.
 
----
-
-## 🛠️ Core AI Stack & Methodology
-
-While **ChatGPT (OpenAI)** served as the primary conversational agent for this project, the following tools are recommended as high-performance alternatives for scientific computing and high-dimensional data analysis:
-
-### **Recommended Complementary AI Tools**
-* **Claude 3.5 Sonnet (Anthropic):** Often superior for complex mathematical reasoning and generating concise, dry Python code for scientific research.
-* **Perplexity AI:** An "Academic Discovery" engine, ideal for sourcing formal definitions of manifold learning and existing literature.
-* **GitHub Copilot / Cursor:** IDE-integrated AI that excels at refactoring large codebases and ensuring type-hint consistency across multiple files.
-* **DeepSeek-V3:** Highly efficient for generating optimized numerical algorithms and high-performance NumPy/SciPy operations.
+The primary AI tool used in this project was **ChatGPT**. AI was used as a support tool for development and writing, while all final methodological choices, code integration, debugging, result interpretation, and submission decisions were reviewed manually.
 
 ---
 
-## 📋 Domains of AI Integration
+## Main Areas of AI Use
 
-The use of AI was integrated as a productivity and support tool across the following project phases:
+AI assistance was used mainly in the following areas:
 
-### 1. Project Planning & Dataset Selection
-AI assisted in refining the project scope and selecting representative datasets to test the limits of linear vs. non-linear estimators:
-* **MNIST:** Real-world high-dimensional manifold.
-* **Gaussian Noise:** Unstructured baseline for the "Curse of Dimensionality."
-* **Swiss Roll:** A canonical non-linear manifold test case.
-* **2D Plane in 10D:** Validation baseline for linear recovery.
+### 1. Project Planning and Structuring
+AI was used to help refine the project scope, shape the overall analytical direction, and organize the work into a coherent structure. This included support in comparing possible approaches to intrinsic-dimension analysis and in framing the project around multiple complementary methods.
 
-### 2. Code Engineering & Implementation
-AI was used to accelerate the development of the Python suite, specifically for:
-* **Mathematical Formulations:** Skeletal implementations of the **Levina–Bickel (kNN MLE)** and **Grassberger–Procaccia (Correlation Dimension)** algorithms.
-* **Refactoring:** Improving code readability, adding type hints, and ensuring consistent docstring documentation across `src/`.
-* **Automation:** Developing the `generate_report_docx.py` script for automated result aggregation.
+### 2. Code Drafting and Refactoring
+AI was used to assist with drafting and improving parts of the Python codebase, including:
+- function structuring,
+- docstrings,
+- type hints,
+- code refactoring,
+- plotting logic,
+- report-generation automation.
 
-### 3. Visualization & Interpretation
-AI was heavily utilized to design the academic-grade plotting suite in `visualizations.py`, focusing on:
-* Multi-panel figure layouts for method comparison.
-* Refining plot clarity, labels, and annotations for high-dimensional projections.
-* Drafting initial interpretations of the gap between PCA variance and geometric intrinsic dimension.
+This support was especially useful for improving code organization and consistency across multiple files.
 
----
+### 3. Mathematical and Technical Explanations
+AI was used to help phrase method descriptions and explain the intuition behind:
+- PCA-based dimensionality estimation,
+- correlation dimension,
+- k-nearest neighbors based intrinsic-dimension estimation.
 
-## ⚖️ Verification & Human Oversight
+These explanations were then reviewed and adapted to match the actual implementation and results of the project.
 
-**AI-assisted content was never treated as an authoritative source.** To ensure scientific integrity, the following verification protocols were applied:
-
-| Layer | Verification Method |
-| :--- | :--- |
-| **Execution-Based** | All scripts were tested in a clean virtual environment to ensure 100% reproducibility. |
-| **Sanity Checks** | Results were validated against known benchmarks (e.g., verifying that the Swiss Roll returns $d \approx 2$ regardless of embedding). |
-| **Mathematical Review** | AI-generated formulas were manually checked against course materials and formal papers (Levina & Bickel, 2004). |
-| **Manual Refinement** | Every paragraph in the final report was edited to ensure technical accuracy and academic tone. |
+### 4. Writing and Documentation
+AI was used to improve the wording, structure, and academic tone of parts of the written materials, including the report text, figure captions, and repository documentation.
 
 ---
 
-## 📁 Files with Significant AI Contribution
+## Human Oversight and Verification
 
-The following files were developed through an iterative collaboration with LLMs:
-* `src/knn_dimension.py` & `src/correlation_dimension.py` (Algorithm structure)
-* `src/visualizations.py` (Plotting logic and aesthetics)
+AI-generated or AI-assisted content was not accepted automatically. To ensure correctness and academic integrity, the following verification steps were applied:
+
+| Verification Layer | How It Was Checked |
+|---|---|
+| Code execution | All major scripts were run directly and checked for successful execution. |
+| Sanity checks | Results were compared against expected behavior on controlled datasets, such as the 2D plane and Swiss roll. |
+| Cross-method comparison | PCA, correlation dimension, and kNN results were compared against one another to detect inconsistencies. |
+| Visual inspection | Generated plots were reviewed manually and refined when the presentation was unclear or misleading. |
+| Interpretation review | Final explanations were checked manually against the actual numerical outputs and figures. |
 
 ---
 
-## ⚠️ Limitations Encountered
-AI tools occasionally provided suboptimal vectorization for very large matrices or broad generalizations regarding the "Manifold Hypothesis." In these instances, manual adjustments were made to ensure the logic remained grounded in the specific numerical results of the experiments.
+## Scope of AI Contribution
+
+AI contributed to parts of the implementation and writing process, but it did not replace independent reasoning. The final project structure, the choice of datasets, the interpretation of the results, the decisions about which outputs to include, and the final submission materials were determined manually.
+
+The project should therefore be understood as a human-led analysis supported by AI tools for productivity, drafting, and refinement.
 
 ---
 
 ## Final Statement
-This project reflects a **human-led** scientific investigation. AI tools were utilized to enhance productivity and linguistic clarity, while the intellectual ownership, experimental design, and final conclusions remain the sole responsibility of the author.
+
+AI was used in this project in a substantial but supervised way. It supported coding, technical writing, and project organization, but all final validation, interpretation, and academic responsibility remained with the author.
 
 **Author:** Maya Rom  
-**Course:** High-Dimensional Probability and Data Analysis for Computer Science  
-**Last Updated:** 2025
+**Course Project:** High-Dimensional Probability / Data Analysis for Computer Science
