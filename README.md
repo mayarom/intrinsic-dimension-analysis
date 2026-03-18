@@ -128,8 +128,7 @@ intrinsic-dimension-analysis/
 │   ├── correlation_dimension.py           # Geometric scaling logic (Method II)
 │   ├── knn_dimension.py                   # Levina–Bickel MLE implementation (Method III)
 │   ├── synthetic_data.py                  # Synthetic dataset generation utilities
-│   ├── visualizations.py                  # Academic-grade plotting suite
-│   └── generate_report_docx.py            # Automated Word report generation
+│   └── visualizations.py                  # Academic-grade plotting suite
 │
 ├── data/
 │   ├── raw/
