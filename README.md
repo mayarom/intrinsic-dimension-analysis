@@ -101,21 +101,32 @@ The Swiss Roll is the most informative benchmark: its true dimension is **2**, y
 
 ## Repository Structure
 
-```
+```text
 intrinsic-dimension-analysis/
 │
-├── load_data.py                  ← MNIST loading and preprocessing
-├── synthetic_data.py             ← synthetic benchmark generation
-├── pca_dimension.py              ← PCA-based estimator
-├── correlation_dimension.py      ← correlation dimension estimator
-├── knn_dimension.py              ← Levina-Bickel kNN estimator
-├── main.py                       ← full experimental pipeline
+├── data/
+│   └── synthetic/
+│       ├── gaussian_noise/              ← stored Gaussian noise dataset
+│       ├── plane_2d_in_10d/             ← stored 2D plane embedded in 10D dataset
+│       └── swiss_roll/                  ← stored Swiss roll dataset
 │
-├── requirements.txt              ← Python dependencies
-├── Project_Report.pdf            ← full academic report
-├── AI_USAGE.md                   ← AI-assisted development documentation
-└── README.md                     ← this file
-```
+├── intrinsic_dimension_analysis/        ← generated figures used in the report
+│
+├── src/
+│   ├── correlation_dimension.py         ← correlation-dimension estimator
+│   ├── knn_dimension.py                 ← Levina-Bickel kNN estimator
+│   ├── load_data.py                     ← dataset loading utilities
+│   ├── main.py                          ← main script for the complete analysis pipeline
+│   ├── pca_dimension.py                 ← PCA-based dimensionality estimator
+│   ├── preprocessing.py                 ← preprocessing and sampling utilities
+│   ├── synthetic_data.py                ← synthetic benchmark generation
+│   └── visualizations.py                ← visualization and figure-generation utilities
+│
+├── .gitignore                           ← Git ignore rules
+├── AI_USAGE.md                          ← AI-assisted development documentation
+├── Project_Report.pdf                   ← final academic report
+├── README.md                            ← repository guide and execution instructions
+└── requirements.txt                     ← required Python packages
 
 ---
 
