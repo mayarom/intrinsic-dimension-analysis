@@ -110,7 +110,7 @@ intrinsic-dimension-analysis/
 │       ├── plane_2d_in_10d/             ← stored 2D plane embedded in 10D dataset
 │       └── swiss_roll/                  ← stored Swiss roll dataset
 │
-├── intrinsic_dimension_analysis/        ← generated figures used in the report
+├── figures/                             ← generated figures used in the report
 │
 ├── src/
 │   ├── correlation_dimension.py         ← correlation-dimension estimator
