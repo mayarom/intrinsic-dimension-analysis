@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 import numpy as np
@@ -8,6 +10,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_ROOT / "data"
 RAW_DATA_DIR = DATA_DIR / "raw"
 MNIST_DIR = RAW_DATA_DIR / "mnist"
+MNIST_LOCAL_FILE = MNIST_DIR / "mnist_784.npz"
 SYNTHETIC_DATA_DIR = DATA_DIR / "synthetic"
 
 
@@ -23,35 +26,60 @@ def ensure_data_directories() -> None:
 
 def load_mnist(as_frame: bool = False) -> tuple[np.ndarray, np.ndarray]:
     """
-    Load the MNIST dataset from OpenML.
+    Load the MNIST dataset.
+
+    The function first attempts to load a locally cached copy saved as an NPZ
+    file. If no local copy is found, it downloads the dataset from OpenML,
+    converts it to NumPy arrays, and stores a local compressed copy for future
+    runs.
 
     Parameters
     ----------
-    as_frame : bool
-        Whether to return the data as a pandas DataFrame internally.
-        The returned values are always converted to NumPy arrays.
+    as_frame : bool, default=False
+        Whether OpenML should internally return the dataset as a pandas object.
+        The returned outputs of this function are always NumPy arrays.
 
     Returns
     -------
     tuple[np.ndarray, np.ndarray]
-        X : array of shape (70000, 784)
+        X : np.ndarray of shape (70000, 784)
             Flattened grayscale digit images.
-        y : array of shape (70000,)
-            Digit labels as integers.
+        y : np.ndarray of shape (70000,)
+            Integer digit labels.
+
+    Raises
+    ------
+    RuntimeError
+        If the dataset cannot be loaded from either the local cache or OpenML.
     """
     ensure_data_directories()
 
-    mnist = fetch_openml(
-        name="mnist_784",
-        version=1,
-        as_frame=as_frame,
-        parser="auto",
-        data_home=str(MNIST_DIR)
-    )
+    if MNIST_LOCAL_FILE.exists():
+        cached = np.load(MNIST_LOCAL_FILE)
+        X = np.asarray(cached["X"], dtype=np.float64)
+        y = np.asarray(cached["y"], dtype=np.int64)
+        return X, y
+
+    try:
+        mnist = fetch_openml(
+            name="mnist_784",
+            version=1,
+            as_frame=as_frame,
+            parser="auto",
+            data_home=str(MNIST_DIR),
+        )
+    except Exception as exc:
+        raise RuntimeError(
+            "Failed to load MNIST from OpenML. "
+            "This may be caused by an invalid local cache, a temporary OpenML "
+            "service issue, or a network problem. "
+            "Delete the local OpenML cache and try again."
+        ) from exc
 
     X = np.asarray(mnist.data, dtype=np.float64)
     y = np.asarray(mnist.target, dtype=np.int64)
 
+    np.savez_compressed(MNIST_LOCAL_FILE, X=X, y=y)
     return X, y
 
 
@@ -64,11 +92,7 @@ def load_gaussian_noise() -> np.ndarray:
     np.ndarray
         Array of shape (n_samples, n_features).
     """
-    filepath = (
-        SYNTHETIC_DATA_DIR
-        / "gaussian_noise"
-        / "gaussian_noise.npy"
-    )
+    filepath = SYNTHETIC_DATA_DIR / "gaussian_noise" / "gaussian_noise.npy"
 
     if not filepath.exists():
         raise FileNotFoundError(
@@ -87,11 +111,7 @@ def load_plane_2d_in_10d() -> np.ndarray:
     np.ndarray
         Array of shape (n_samples, 10).
     """
-    filepath = (
-        SYNTHETIC_DATA_DIR
-        / "plane_2d_in_10d"
-        / "plane_2d_in_10d.npy"
-    )
+    filepath = SYNTHETIC_DATA_DIR / "plane_2d_in_10d" / "plane_2d_in_10d.npy"
 
     if not filepath.exists():
         raise FileNotFoundError(
@@ -108,21 +128,13 @@ def load_swiss_roll() -> tuple[np.ndarray, np.ndarray]:
     Returns
     -------
     tuple[np.ndarray, np.ndarray]
-        X : array of shape (n_samples, 3)
+        X : np.ndarray of shape (n_samples, 3)
             Swiss roll samples in 3D ambient space.
-        t : array of shape (n_samples,)
-            The univariate position parameter along the roll.
+        t : np.ndarray of shape (n_samples,)
+            Position parameter along the roll.
     """
-    x_filepath = (
-        SYNTHETIC_DATA_DIR
-        / "swiss_roll"
-        / "swiss_roll_X.npy"
-    )
-    t_filepath = (
-        SYNTHETIC_DATA_DIR
-        / "swiss_roll"
-        / "swiss_roll_t.npy"
-    )
+    x_filepath = SYNTHETIC_DATA_DIR / "swiss_roll" / "swiss_roll_X.npy"
+    t_filepath = SYNTHETIC_DATA_DIR / "swiss_roll" / "swiss_roll_t.npy"
 
     if not x_filepath.exists():
         raise FileNotFoundError(
