@@ -1,7 +1,7 @@
 # Intrinsic Dimension Analysis
 ## of High-Dimensional Data
 
-> **Final Project** — High-Dimensional Probability and Data Analysis  
+> **Final Project** - High-Dimensional Probability and Data Analysis  
 > Department of Computer Science · 2026
 
 ---
@@ -16,7 +16,7 @@
 
 ## Abstract
 
-Many modern datasets inhabit very high-dimensional ambient spaces, yet their meaningful structure resides on a substantially **lower-dimensional manifold**. Estimating this latent or intrinsic dimension is a foundational problem in probability, statistics, and data analysis — with implications for representation, compression, visualization, and learning.
+Many modern datasets inhabit very high-dimensional ambient spaces, yet their meaningful structure resides on a substantially **lower-dimensional manifold**. Estimating this latent or intrinsic dimension is a foundational problem in probability, statistics, and data analysis - with implications for representation, compression, visualization, and learning.
 
 This project presents an empirical investigation of intrinsic dimensionality estimation using **three complementary approaches**: a linear method based on Principal Component Analysis (PCA), the Grassberger-Procaccia correlation dimension, and the Levina-Bickel k-nearest-neighbours maximum-likelihood estimator.
 
@@ -37,7 +37,7 @@ The central objective is to study how different intrinsic dimension estimators b
 | Identify trade-offs | Practical strengths and limitations of each method |
 | Interpret discrepancies | What disagreement reveals about underlying structure |
 
-The broader motivation is to understand how dimensionality should be interpreted in realistic settings — where ambient representation may be misleadingly large.
+The broader motivation is to understand how dimensionality should be interpreted in realistic settings - where ambient representation may be misleadingly large.
 
 ---
 
@@ -63,7 +63,7 @@ Based on the **Grassberger-Procaccia** framework. Studies how the number of poin
 d = d(log C(ε)) / d(log ε)
 ```
 
-Unlike PCA, this method is sensitive to non-linear geometric structure — particularly useful when low-dimensional organization cannot be captured by a single linear subspace.
+Unlike PCA, this method is sensitive to non-linear geometric structure - particularly useful when low-dimensional organization cannot be captured by a single linear subspace.
 
 ---
 
@@ -81,19 +81,19 @@ Non-linear and effective for manifold-like data, but behaviour depends on neighb
 
 ### Real-World
 
-**MNIST** — loaded via `load_data.py`
+**MNIST** - loaded via `load_data.py`
 
 Although each image is represented in a high-dimensional ambient space, MNIST is widely understood to possess substantial lower-dimensional structure due to the constrained nature of handwritten digit geometry. Data may be subsampled for computational tractability in pairwise or neighbourhood-based experiments.
 
 ---
 
-### Synthetic — generated via `synthetic_data.py`
+### Synthetic - generated via `synthetic_data.py`
 
 | Dataset | True Dimension | Purpose |
 |---------|---------------|---------|
-| **Gaussian Noise** | ~ ambient | Contrast case — no underlying manifold |
+| **Gaussian Noise** | ~ ambient | Contrast case - no underlying manifold |
 | **2D Plane in 10D** | 2 | Clean linear validation for PCA |
-| **Swiss Roll** | 2 | Non-linear benchmark — curved geometry |
+| **Swiss Roll** | 2 | Non-linear benchmark - curved geometry |
 
 The Swiss Roll is the most informative benchmark: its true dimension is **2**, yet its curved geometry makes it a genuine challenge for linear methods, revealing precisely where PCA overestimates.
 
@@ -140,14 +140,14 @@ pip install -r requirements.txt
 
 ## Execution
 
-### 1 — Clone the repository
+### 1 - Clone the repository
 
 ```bash
 git clone https://github.com/mayarom/intrinsic-dimension-analysis.git
 cd intrinsic-dimension-analysis
 ```
 
-### 2 — Create and activate a virtual environment
+### 2 - Create and activate a virtual environment
 
 **macOS / Linux**
 ```bash
@@ -161,13 +161,13 @@ python -m venv venv
 venv\Scripts\activate
 ```
 
-### 3 — Install dependencies
+### 3 - Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4 — Run the full analysis pipeline
+### 4 - Run the full analysis pipeline
 
 ```bash
 python main.py
@@ -181,7 +181,7 @@ Running the pipeline will:
 - print numerical results to the console
 - produce and save visual outputs
 
-### 5 — Visual outputs
+### 5 - Visual outputs
 
 ```
 ./visualizations/
