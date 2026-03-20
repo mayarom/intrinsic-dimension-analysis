@@ -1,326 +1,4 @@
-"""
-import numpy as np
-
-from load_data import (
-    load_gaussian_noise,
-    load_mnist,
-    load_plane_2d_in_10d,
-    load_swiss_roll,
-)
-from preprocessing import preprocessing_pipeline
-
-
-def main() -> None:
-    x_mnist, y_mnist = load_mnist()
-    x_gaussian = load_gaussian_noise()
-    x_plane = load_plane_2d_in_10d()
-    x_swiss, t_swiss = load_swiss_roll()
-
-    mnist_results = preprocessing_pipeline(x_mnist)
-    gaussian_results = preprocessing_pipeline(x_gaussian)
-    plane_results = preprocessing_pipeline(x_plane)
-    swiss_results = preprocessing_pipeline(x_swiss)
-
-    x_mnist_processed = mnist_results["x_processed"]
-    x_gaussian_processed = gaussian_results["x_processed"]
-    x_plane_processed = plane_results["x_processed"]
-    x_swiss_processed = swiss_results["x_processed"]
-
-    if not isinstance(x_mnist_processed, np.ndarray):
-        raise TypeError("Expected x_mnist_processed to be a NumPy array.")
-
-    if not isinstance(x_gaussian_processed, np.ndarray):
-        raise TypeError("Expected x_gaussian_processed to be a NumPy array.")
-
-    if not isinstance(x_plane_processed, np.ndarray):
-        raise TypeError("Expected x_plane_processed to be a NumPy array.")
-
-    if not isinstance(x_swiss_processed, np.ndarray):
-        raise TypeError("Expected x_swiss_processed to be a NumPy array.")
-
-    print("MNIST original shape:", x_mnist.shape)
-    print("MNIST processed shape:", x_mnist_processed.shape)
-    print("MNIST labels shape:", y_mnist.shape)
-    print()
-
-    print("Gaussian noise original shape:", x_gaussian.shape)
-    print("Gaussian noise processed shape:", x_gaussian_processed.shape)
-    print()
-
-    print("2D plane in 10D original shape:", x_plane.shape)
-    print("2D plane in 10D processed shape:", x_plane_processed.shape)
-    print()
-
-    print("Swiss roll original shape:", x_swiss.shape)
-    print("Swiss roll processed shape:", x_swiss_processed.shape)
-    print("Swiss roll parameter shape:", t_swiss.shape)
-
-
-if __name__ == "__main__":
-    main()
-"""
 from __future__ import annotations
-
-"""
-import numpy as np
-
-from load_data import (
-    load_gaussian_noise,
-    load_mnist,
-    load_plane_2d_in_10d,
-    load_swiss_roll,
-)
-from pca_dimension import estimate_pca_dimensionality, print_pca_summary
-from preprocessing import preprocessing_pipeline
-
-
-def get_processed_array(results: dict[str, object], key: str = "x_processed") -> np.ndarray:
-
-
-    value = results.get(key)
-
-    if not isinstance(value, np.ndarray):
-        raise TypeError(f"Expected '{key}' to be a NumPy array.")
-
-    return value
-
-
-def run_preprocessing_and_pca(
-    dataset_name: str,
-    x: np.ndarray
-) -> None:
-
-    print("=" * 80)
-    print(f"Dataset: {dataset_name}")
-    print("=" * 80)
-
-    preprocessing_results = preprocessing_pipeline(
-        x,
-        remove_constants=True,
-        variance_threshold=0.0,
-        apply_standardization=True,
-        apply_normalization=False
-    )
-
-    x_processed = get_processed_array(preprocessing_results)
-
-    print("Original shape:", x.shape)
-    print("Processed shape:", x_processed.shape)
-    print()
-
-    pca_results = estimate_pca_dimensionality(
-        x_processed,
-        thresholds=(0.90, 0.95, 0.99)
-    )
-    print_pca_summary(pca_results)
-    print()
-
-
-def main() -> None:
-
-    x_mnist, y_mnist = load_mnist()
-    x_gaussian = load_gaussian_noise()
-    x_plane = load_plane_2d_in_10d()
-    x_swiss, t_swiss = load_swiss_roll()
-
-    print("All datasets loaded successfully.")
-    print("MNIST labels shape:", y_mnist.shape)
-    print("Swiss roll parameter shape:", t_swiss.shape)
-    print()
-
-    run_preprocessing_and_pca("MNIST", x_mnist)
-    run_preprocessing_and_pca("Gaussian Noise", x_gaussian)
-    run_preprocessing_and_pca("2D Plane Embedded in 10D", x_plane)
-    run_preprocessing_and_pca("Swiss Roll", x_swiss)
-
-
-if __name__ == "__main__":
-    main()
-"""
-"""
-import numpy as np
-
-from correlation_dimension import (
-    estimate_correlation_dimension,
-    print_correlation_dimension_summary,
-)
-from load_data import (
-    load_gaussian_noise,
-    load_mnist,
-    load_plane_2d_in_10d,
-    load_swiss_roll,
-)
-from pca_dimension import estimate_pca_dimensionality, print_pca_summary
-from preprocessing import preprocessing_pipeline, sample_dataset
-
-
-def get_processed_array(
-    results: dict[str, object],
-    key: str = "x_processed"
-) -> np.ndarray:
-
-    value = results.get(key)
-
-    if not isinstance(value, np.ndarray):
-        raise TypeError(f"Expected '{key}' to be a NumPy array.")
-
-    return value
-
-
-def run_preprocessing_and_pca(
-    dataset_name: str,
-    x: np.ndarray
-) -> None:
-    print("=" * 80)
-    print(f"PCA Analysis - {dataset_name}")
-    print("=" * 80)
-
-    preprocessing_results = preprocessing_pipeline(
-        x,
-        remove_constants=True,
-        variance_threshold=0.0,
-        apply_standardization=True,
-        apply_normalization=False
-    )
-
-    x_processed = get_processed_array(preprocessing_results)
-
-    print("Original shape:", x.shape)
-    print("Processed shape:", x_processed.shape)
-    print()
-
-    pca_results = estimate_pca_dimensionality(
-        x_processed,
-        thresholds=(0.90, 0.95, 0.99)
-    )
-    print_pca_summary(pca_results)
-    print()
-
-
-def run_preprocessing_and_correlation_dimension(
-    dataset_name: str,
-    x: np.ndarray,
-    sample_size: int | None = None,
-    random_state: int = 42,
-    n_radii: int = 30,
-    min_percentile: float = 1.0,
-    max_percentile: float = 50.0,
-    scaling_region_start: int = 5,
-    scaling_region_end: int | None = 20
-) -> None:
-
-    print("=" * 80)
-    print(f"Correlation Dimension Analysis - {dataset_name}")
-    print("=" * 80)
-
-    x_input = x
-
-    if sample_size is not None:
-        x_input, _ = sample_dataset(
-            x=x,
-            y=None,
-            n_samples=sample_size,
-            random_state=random_state
-        )
-        print("Original shape:", x.shape)
-        print("Sampled shape:", x_input.shape)
-    else:
-        print("Original shape:", x.shape)
-
-    preprocessing_results = preprocessing_pipeline(
-        x_input,
-        remove_constants=True,
-        variance_threshold=0.0,
-        apply_standardization=True,
-        apply_normalization=False
-    )
-
-    x_processed = get_processed_array(preprocessing_results)
-
-    print("Processed shape:", x_processed.shape)
-    print()
-
-    correlation_results = estimate_correlation_dimension(
-        x=x_processed,
-        n_radii=n_radii,
-        min_percentile=min_percentile,
-        max_percentile=max_percentile,
-        scaling_region_start=scaling_region_start,
-        scaling_region_end=scaling_region_end
-    )
-    print_correlation_dimension_summary(correlation_results)
-    print()
-
-
-def main() -> None:
-
-    x_mnist, y_mnist = load_mnist()
-    x_gaussian = load_gaussian_noise()
-    x_plane = load_plane_2d_in_10d()
-    x_swiss, t_swiss = load_swiss_roll()
-
-    print("All datasets loaded successfully.")
-    print("MNIST labels shape:", y_mnist.shape)
-    print("Swiss roll parameter shape:", t_swiss.shape)
-    print()
-
-    run_preprocessing_and_pca("MNIST", x_mnist)
-    run_preprocessing_and_pca("Gaussian Noise", x_gaussian)
-    run_preprocessing_and_pca("2D Plane Embedded in 10D", x_plane)
-    run_preprocessing_and_pca("Swiss Roll", x_swiss)
-
-    run_preprocessing_and_correlation_dimension(
-        dataset_name="MNIST",
-        x=x_mnist,
-        sample_size=1000,
-        random_state=42,
-        n_radii=30,
-        min_percentile=1.0,
-        max_percentile=50.0,
-        scaling_region_start=5,
-        scaling_region_end=20
-    )
-
-    run_preprocessing_and_correlation_dimension(
-        dataset_name="Gaussian Noise",
-        x=x_gaussian,
-        sample_size=None,
-        random_state=42,
-        n_radii=30,
-        min_percentile=1.0,
-        max_percentile=50.0,
-        scaling_region_start=5,
-        scaling_region_end=20
-    )
-
-    run_preprocessing_and_correlation_dimension(
-        dataset_name="2D Plane Embedded in 10D",
-        x=x_plane,
-        sample_size=None,
-        random_state=42,
-        n_radii=30,
-        min_percentile=1.0,
-        max_percentile=50.0,
-        scaling_region_start=5,
-        scaling_region_end=20
-    )
-
-    run_preprocessing_and_correlation_dimension(
-        dataset_name="Swiss Roll",
-        x=x_swiss,
-        sample_size=None,
-        random_state=42,
-        n_radii=30,
-        min_percentile=1.0,
-        max_percentile=50.0,
-        scaling_region_start=5,
-        scaling_region_end=20
-    )
-
-
-if __name__ == "__main__":
-    main()
-"""
 
 from typing import Final
 
@@ -337,15 +15,31 @@ from load_data import (
 from pca_dimension import estimate_pca_dimensionality
 from preprocessing import preprocessing_pipeline, sample_dataset
 
+# ---------------------------------------------------------------------
+# Project-wide constants
+# ---------------------------------------------------------------------
+
 MNIST_SAMPLE_SIZE_FOR_GEOMETRIC_METHODS: Final[int] = 1000
 RANDOM_STATE: Final[int] = 42
 DEFAULT_KNN_K: Final[int] = 10
 DEFAULT_KNN_K_VALUES: Final[tuple[int, ...]] = (5, 8, 10, 12, 15, 20)
 
+CORRELATION_N_RADII: Final[int] = 30
+CORRELATION_MIN_PERCENTILE: Final[float] = 1.0
+CORRELATION_MAX_PERCENTILE: Final[float] = 50.0
+CORRELATION_SCALING_REGION_START: Final[int] = 5
+CORRELATION_SCALING_REGION_END: Final[int] = 20
+
+PCA_THRESHOLDS: Final[tuple[float, ...]] = (0.90, 0.95, 0.99)
+
+
+# ---------------------------------------------------------------------
+# Utility and validation helpers
+# ---------------------------------------------------------------------
 
 def get_processed_array(
-        results: dict[str, object],
-        key: str = "x_processed",
+    results: dict[str, object],
+    key: str = "x_processed",
 ) -> np.ndarray:
     """
     Extract a processed NumPy array from a preprocessing results dictionary.
@@ -353,14 +47,19 @@ def get_processed_array(
     Parameters
     ----------
     results : dict[str, object]
-        Dictionary returned by preprocessing_pipeline().
+        Dictionary returned by ``preprocessing_pipeline``.
     key : str, default="x_processed"
         Key under which the processed array is stored.
 
     Returns
     -------
     np.ndarray
-        Extracted processed NumPy array.
+        The processed feature matrix.
+
+    Raises
+    ------
+    TypeError
+        If the requested value is not a NumPy array.
     """
     value = results.get(key)
 
@@ -372,7 +71,10 @@ def get_processed_array(
 
 def preprocess_for_analysis(x: np.ndarray) -> np.ndarray:
     """
-    Apply the standard preprocessing configuration used in the project.
+    Apply the standard preprocessing configuration used throughout the project.
+
+    The preprocessing pipeline removes constant features, optionally filters by
+    variance threshold, and applies feature standardization.
 
     Parameters
     ----------
@@ -382,7 +84,7 @@ def preprocess_for_analysis(x: np.ndarray) -> np.ndarray:
     Returns
     -------
     np.ndarray
-        Processed feature matrix.
+        Preprocessed feature matrix.
     """
     preprocessing_results = preprocessing_pipeline(
         x,
@@ -396,26 +98,26 @@ def preprocess_for_analysis(x: np.ndarray) -> np.ndarray:
 
 def print_separator(char: str = "=", width: int = 100) -> None:
     """
-    Print a separator line.
+    Print a horizontal separator line.
 
     Parameters
     ----------
     char : str, default="="
-        Character used for the separator.
+        Character used to construct the separator.
     width : int, default=100
-        Separator width.
+        Total width of the separator line.
     """
     print(char * width)
 
 
 def print_title(title: str) -> None:
     """
-    Print a section title.
+    Print a formatted section title.
 
     Parameters
     ----------
     title : str
-        Title text.
+        Section title.
     """
     print_separator("=")
     print(title)
@@ -424,30 +126,40 @@ def print_title(title: str) -> None:
 
 def print_subtitle(subtitle: str) -> None:
     """
-    Print a subsection title.
+    Print a formatted subsection title.
 
     Parameters
     ----------
     subtitle : str
-        Subtitle text.
+        Subsection title.
     """
     print(subtitle)
     print_separator("-")
 
 
-def validate_pca_results(results: dict[str, object]) -> tuple[dict[float, int], np.ndarray, np.ndarray]:
+def validate_pca_results(
+    results: dict[str, object],
+) -> tuple[dict[float, int], np.ndarray, np.ndarray]:
     """
-    Validate and extract PCA results.
+    Validate and extract the main PCA outputs.
 
     Parameters
     ----------
     results : dict[str, object]
-        PCA results dictionary.
+        Dictionary returned by ``estimate_pca_dimensionality``.
 
     Returns
     -------
     tuple[dict[float, int], np.ndarray, np.ndarray]
-        Components per threshold, explained variance ratio, cumulative explained variance.
+        A tuple containing:
+        - the number of components required for each variance threshold,
+        - the explained variance ratio per component,
+        - the cumulative explained variance.
+
+    Raises
+    ------
+    TypeError
+        If any required field has an unexpected type.
     """
     components_per_threshold = results.get("components_per_threshold")
     explained_variance_ratio = results.get("explained_variance_ratio")
@@ -460,7 +172,11 @@ def validate_pca_results(results: dict[str, object]) -> tuple[dict[float, int], 
     if not isinstance(cumulative_explained_variance, np.ndarray):
         raise TypeError("Expected cumulative_explained_variance to be a NumPy array.")
 
-    return components_per_threshold, explained_variance_ratio, cumulative_explained_variance
+    return (
+        components_per_threshold,
+        explained_variance_ratio,
+        cumulative_explained_variance,
+    )
 
 
 def validate_correlation_results(results: dict[str, object]) -> float:
@@ -470,12 +186,17 @@ def validate_correlation_results(results: dict[str, object]) -> float:
     Parameters
     ----------
     results : dict[str, object]
-        Correlation-dimension results dictionary.
+        Dictionary returned by ``estimate_correlation_dimension``.
 
     Returns
     -------
     float
         Estimated correlation dimension.
+
+    Raises
+    ------
+    TypeError
+        If the extracted estimate is not a float.
     """
     estimated_dimension = results.get("estimated_dimension")
 
@@ -485,20 +206,31 @@ def validate_correlation_results(results: dict[str, object]) -> float:
     return estimated_dimension
 
 
-def validate_knn_main_results(results: dict[str, object]) -> tuple[int, float, float, float, float]:
+def validate_knn_main_results(
+    results: dict[str, object],
+) -> tuple[int, float, float, float, float]:
     """
-    Validate and extract the main kNN estimation summary.
+    Validate and extract the main kNN intrinsic-dimension summary.
 
     Parameters
     ----------
     results : dict[str, object]
-        kNN results dictionary.
+        Dictionary returned by ``estimate_knn_dimension``.
 
     Returns
     -------
     tuple[int, float, float, float, float]
-        k, estimated_dimension, mean_local_dimension, median_local_dimension,
-        std_local_dimension.
+        A tuple containing:
+        - selected k,
+        - global estimated dimension,
+        - mean local dimension,
+        - median local dimension,
+        - standard deviation of local dimensions.
+
+    Raises
+    ------
+    TypeError
+        If any extracted field has an unexpected type.
     """
     k = results.get("k")
     estimated_dimension = results.get("estimated_dimension")
@@ -526,20 +258,32 @@ def validate_knn_main_results(results: dict[str, object]) -> tuple[int, float, f
     )
 
 
-def validate_knn_range_results(results: dict[str, object]) -> tuple[np.ndarray, np.ndarray, float, float, float, float]:
+def validate_knn_range_results(
+    results: dict[str, object],
+) -> tuple[np.ndarray, np.ndarray, float, float, float, float]:
     """
-    Validate and extract the k-range kNN summary.
+    Validate and extract the k-range sensitivity analysis outputs.
 
     Parameters
     ----------
     results : dict[str, object]
-        k-range kNN results dictionary.
+        Dictionary returned by ``estimate_knn_dimension_over_k_range``.
 
     Returns
     -------
     tuple[np.ndarray, np.ndarray, float, float, float, float]
-        k_values, dimension_estimates, mean_estimate, std_estimate,
-        min_estimate, max_estimate.
+        A tuple containing:
+        - tested k values,
+        - dimension estimate for each k,
+        - mean estimate across k,
+        - standard deviation across k,
+        - minimum estimate across k,
+        - maximum estimate across k.
+
+    Raises
+    ------
+    TypeError
+        If any extracted field has an unexpected type.
     """
     k_values = results.get("k_values")
     dimension_estimates = results.get("dimension_estimates")
@@ -571,27 +315,42 @@ def validate_knn_range_results(results: dict[str, object]) -> tuple[np.ndarray, 
     )
 
 
+# ---------------------------------------------------------------------
+# Core analysis pipeline
+# ---------------------------------------------------------------------
+
 def analyze_dataset(
-        dataset_name: str,
-        x_raw: np.ndarray,
-        use_sampling_for_geometric_methods: bool = False,
+    dataset_name: str,
+    x_raw: np.ndarray,
+    use_sampling_for_geometric_methods: bool = False,
 ) -> dict[str, object]:
     """
-    Run the full analysis pipeline for one dataset.
+    Run the complete intrinsic-dimension analysis pipeline for a single dataset.
+
+    The pipeline includes:
+    1. preprocessing,
+    2. PCA-based dimensionality estimation,
+    3. correlation-dimension estimation,
+    4. kNN-based intrinsic-dimension estimation,
+    5. kNN sensitivity analysis over a range of k values.
+
+    For large datasets such as MNIST, a sampled subset may be used for the
+    computationally heavier geometric methods.
 
     Parameters
     ----------
     dataset_name : str
-        Dataset display name.
+        Human-readable dataset name.
     x_raw : np.ndarray
         Raw feature matrix.
     use_sampling_for_geometric_methods : bool, default=False
-        Whether to use sampling for correlation dimension and kNN methods.
+        Whether to sample the dataset before running correlation-dimension and
+        kNN-based methods.
 
     Returns
     -------
     dict[str, object]
-        Full results dictionary for the dataset.
+        Dictionary containing all outputs needed for reporting and comparison.
     """
     x_processed = preprocess_for_analysis(x_raw)
 
@@ -606,15 +365,18 @@ def analyze_dataset(
     else:
         x_geometric_processed = x_processed
 
-    pca_results = estimate_pca_dimensionality(x_processed)
+    pca_results = estimate_pca_dimensionality(
+        x_processed,
+        thresholds=PCA_THRESHOLDS,
+    )
 
     correlation_results = estimate_correlation_dimension(
         x=x_geometric_processed,
-        n_radii=30,
-        min_percentile=1.0,
-        max_percentile=50.0,
-        scaling_region_start=5,
-        scaling_region_end=20,
+        n_radii=CORRELATION_N_RADII,
+        min_percentile=CORRELATION_MIN_PERCENTILE,
+        max_percentile=CORRELATION_MAX_PERCENTILE,
+        scaling_region_start=CORRELATION_SCALING_REGION_START,
+        scaling_region_end=CORRELATION_SCALING_REGION_END,
     )
 
     knn_main_results = estimate_knn_dimension(
@@ -645,14 +407,23 @@ def analyze_dataset(
     }
 
 
+# ---------------------------------------------------------------------
+# Reporting helpers
+# ---------------------------------------------------------------------
+
 def print_dataset_results(result: dict[str, object]) -> None:
     """
-    Print all results for a single dataset in a report-friendly format.
+    Print the analysis results for a single dataset in a structured format.
 
     Parameters
     ----------
     result : dict[str, object]
-        Dataset results dictionary.
+        Dictionary returned by ``analyze_dataset``.
+
+    Raises
+    ------
+    TypeError
+        If any required field has an unexpected type.
     """
     dataset_name = result.get("dataset_name")
     x_raw_shape = result.get("x_raw_shape")
@@ -680,9 +451,13 @@ def print_dataset_results(result: dict[str, object]) -> None:
     if not isinstance(knn_range_results, dict):
         raise TypeError("Expected knn_range_results to be a dictionary.")
 
-    pca_thresholds, explained_variance_ratio, cumulative_explained_variance = validate_pca_results(pca_results)
+    pca_thresholds, explained_variance_ratio, cumulative_explained_variance = (
+        validate_pca_results(pca_results)
+    )
     correlation_dimension = validate_correlation_results(correlation_results)
-    knn_k, knn_estimate, knn_mean_local, knn_median_local, knn_std_local = validate_knn_main_results(knn_main_results)
+    knn_k, knn_estimate, knn_mean_local, knn_median_local, knn_std_local = (
+        validate_knn_main_results(knn_main_results)
+    )
     k_values, dimension_estimates, mean_estimate, std_estimate, min_estimate, max_estimate = (
         validate_knn_range_results(knn_range_results)
     )
@@ -700,9 +475,7 @@ def print_dataset_results(result: dict[str, object]) -> None:
     print(f"Components for 95% variance:       {pca_thresholds[0.95]}")
     print(f"Components for 99% variance:       {pca_thresholds[0.99]}")
     print(f"First explained variance ratio:    {float(explained_variance_ratio[0]):.6f}")
-    print(
-        f"Cumulative variance at component 1:{float(cumulative_explained_variance[0]):.6f}"
-    )
+    print(f"Cumulative variance at component 1:{float(cumulative_explained_variance[0]):.6f}")
     print()
 
     print_subtitle("Correlation dimension estimation")
@@ -710,7 +483,7 @@ def print_dataset_results(result: dict[str, object]) -> None:
     print()
 
     print_subtitle("kNN-based intrinsic dimension estimation")
-    print(f"Method:                            kNN Levina-Bickel MLE")
+    print("Method:                            kNN Levina-Bickel MLE")
     print(f"Selected k:                        {knn_k}")
     print(f"Headline estimate:                 {knn_estimate:.4f}")
     print(f"Mean local estimate:               {knn_mean_local:.4f}")
@@ -744,12 +517,12 @@ def print_dataset_results(result: dict[str, object]) -> None:
 
 def print_final_summary_table(results: list[dict[str, object]]) -> None:
     """
-    Print a final summary table across all datasets.
+    Print a final comparison table across all analyzed datasets.
 
     Parameters
     ----------
     results : list[dict[str, object]]
-        List of dataset results.
+        List of dictionaries returned by ``analyze_dataset``.
     """
     print_title("FINAL SUMMARY TABLE")
     print(
@@ -806,17 +579,22 @@ def print_final_summary_table(results: list[dict[str, object]]) -> None:
         )
 
 
+# ---------------------------------------------------------------------
+# Main entry point
+# ---------------------------------------------------------------------
+
 def main() -> None:
     """
-    Run the complete intrinsic-dimension analysis pipeline on all project datasets.
+    Execute the complete intrinsic-dimension analysis workflow.
 
-    The pipeline includes:
-    - data loading
-    - preprocessing
-    - PCA-based dimensionality estimation
-    - correlation dimension estimation
-    - kNN-based intrinsic dimension estimation
-    - sensitivity analysis over multiple k values
+    The workflow includes:
+    - loading all datasets used in the project,
+    - preprocessing each dataset,
+    - estimating intrinsic dimensionality using PCA,
+    - estimating correlation dimension,
+    - estimating kNN-based intrinsic dimension,
+    - evaluating kNN sensitivity across multiple k values,
+    - printing per-dataset summaries and a final comparison table.
     """
     print("\nLoading datasets...\n")
 
