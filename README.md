@@ -127,7 +127,7 @@ intrinsic-dimension-analysis/
 ├── Project_Report.pdf                   ← final academic report
 ├── README.md                            ← repository guide and execution instructions
 └── requirements.txt                     ← required Python packages
-
+```
 ---
 
 ## Dependencies
